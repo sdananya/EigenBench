@@ -350,6 +350,21 @@ python3 scripts/upload_results.py --batch-dir runs/matrix/ --name "matrix" --not
 - Re-uploading with the same name overwrites the previous entry
 - Git commit hash and scenario range are captured automatically
 
+### Surface pairwise examples from an evaluations file
+
+Pick two models that appear in an `evaluations*.jsonl` and surface the scenarios where the judges most agreed that A beat B (sorted by how many judge × ordering comparisons sided with A, with criterion-level margin as a tiebreaker). The output JSON is written next to the eval file.
+
+```bash
+# Non-interactive
+python3 scripts/surface_pairwise_examples.py runs/loving_checkpoints/evaluations_subset_v2.jsonl \
+    --model-a Introspection-final --model-b DPO-step200 --top-k 10
+
+# Interactive (lists model names found in the file and prompts for A and B)
+python3 scripts/surface_pairwise_examples.py runs/loving_checkpoints/evaluations_subset_v2.jsonl
+```
+
+Each surfaced example contains the scenario, both models' responses, `n_judges` / `winner_chosen` / `loser_chosen` / `tied`, and a per‑judge breakdown.
+
 ## Citation
 
 ```bibtex
