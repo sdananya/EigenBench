@@ -96,6 +96,12 @@ def surface_pairwise_examples(
             sd["winner_criterion_wins"] += w_wins
             sd["loser_criterion_wins"] += l_wins
             sd["ties"] += c_ties
+            winner_reflection = (
+                row.get("eval1 reflection") if winner_is_e1 else row.get("eval2 reflection")
+            )
+            loser_reflection = (
+                row.get("eval2 reflection") if winner_is_e1 else row.get("eval1 reflection")
+            )
             sd["judge_breakdown"].append({
                 "judge": row["judge_name"],
                 "ordering": "winner_first" if winner_is_e1 else "loser_first",
@@ -107,6 +113,8 @@ def surface_pairwise_examples(
                     else "loser" if l_wins > w_wins
                     else "tie"
                 ),
+                "winner_reflection": winner_reflection,
+                "loser_reflection": loser_reflection,
             })
 
     results = []

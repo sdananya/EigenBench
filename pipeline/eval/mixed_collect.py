@@ -163,6 +163,7 @@ def _phase1_vllm(
     eval_responses: dict,
     max_tokens: int,
     verbose: bool,
+    vllm_temperature: float = 0.7,
 ):
     """Generate responses for local HF models via vLLM batching."""
     from vllm import SamplingParams
@@ -182,7 +183,7 @@ def _phase1_vllm(
 
         with VLLMEngineManager(base_model_id, enable_lora=has_loras) as llm:
             lora_requests = prepare_lora_requests(llm, base_info["loras"] if has_loras else {})
-            sampling_params = SamplingParams(max_tokens=max_tokens, temperature=0.7)
+            sampling_params = SamplingParams(max_tokens=max_tokens, temperature=vllm_temperature)
 
             for nick, lora_path in models_needed:
                 prompts = []
@@ -315,6 +316,7 @@ def _phase2_vllm_default(
     criteria_text: str,
     max_tokens: int,
     verbose: bool,
+    vllm_temperature: float = 0.7,
 ):
     """vLLM batched reflections for default mode."""
     from vllm import SamplingParams
@@ -336,7 +338,7 @@ def _phase2_vllm_default(
 
         with VLLMEngineManager(base_model_id, enable_lora=has_loras) as llm:
             lora_requests = prepare_lora_requests(llm, base_info["loras"] if has_loras else {})
-            sampling_params = SamplingParams(max_tokens=max_tokens, temperature=0.7)
+            sampling_params = SamplingParams(max_tokens=max_tokens, temperature=vllm_temperature)
 
             for nick, _ in models_needed:
                 prompts = []
@@ -380,6 +382,7 @@ def _phase2_vllm_all_to_all(
     criteria_text: str,
     max_tokens: int,
     verbose: bool,
+    vllm_temperature: float = 0.7,
 ):
     """vLLM batched reflections for all-to-all mode (per-judge keyed)."""
     from vllm import SamplingParams
@@ -401,7 +404,7 @@ def _phase2_vllm_all_to_all(
 
         with VLLMEngineManager(base_model_id, enable_lora=has_loras) as llm:
             lora_requests = prepare_lora_requests(llm, base_info["loras"] if has_loras else {})
-            sampling_params = SamplingParams(max_tokens=max_tokens, temperature=0.7)
+            sampling_params = SamplingParams(max_tokens=max_tokens, temperature=vllm_temperature)
 
             for nick, _ in models_needed:
                 prompts = []
@@ -584,6 +587,7 @@ def _phase3_vllm(
     max_tokens: int,
     all_to_all: bool,
     verbose: bool,
+    vllm_temperature: float = 0.7,
 ) -> list[dict]:
     """Pairwise comparisons for local HF judges via vLLM batching."""
     from vllm import SamplingParams
@@ -606,7 +610,7 @@ def _phase3_vllm(
 
         with VLLMEngineManager(base_model_id, enable_lora=has_loras) as llm:
             lora_requests = prepare_lora_requests(llm, base_info["loras"] if has_loras else {})
-            sampling_params = SamplingParams(max_tokens=max_tokens, temperature=0.7)
+            sampling_params = SamplingParams(max_tokens=max_tokens, temperature=vllm_temperature)
 
             for nick, _ in models_needed:
                 prompts = []
@@ -692,8 +696,12 @@ def collect_mixed_evaluations(
     criteria_text = "\n".join(criteria)
     allow_ties = bool(collection_cfg.get("allow_ties", True))
     max_tokens = int(collection_cfg.get("max_tokens", 4096))
+    vllm_temperature = float(collection_cfg.get("vllm_temperature", 0.7))
     sampler_mode = (collection_cfg.get("sampler_mode", "random_judge_group")).strip().lower()
     all_to_all = sampler_mode == "all_to_all"
+
+    if verbose:
+        print(f"  vLLM sampling temperature: {vllm_temperature}")
 
     # Group models
     local_base_models, local_tokenizers, openrouter_models = group_models_for_vllm(models)
@@ -719,7 +727,7 @@ def collect_mixed_evaluations(
 
     _phase1_openrouter(eval_assignments, openrouter_models, eval_responses, max_tokens, verbose)
     if has_local:
-        _phase1_vllm(eval_assignments, local_base_models, local_tokenizers, eval_responses, max_tokens, verbose)
+        _phase1_vllm(eval_assignments, local_base_models, local_tokenizers, eval_responses, max_tokens, verbose, vllm_temperature)
 
     # Phase 2: Judge Reflections
     print("Phase 2: Generate judge reflections")
@@ -734,6 +742,7 @@ def collect_mixed_evaluations(
             _phase2_vllm_all_to_all(
                 eval_assignments, local_base_models, local_tokenizers,
                 eval_responses, judge_reflections, criteria_text, max_tokens, verbose,
+                vllm_temperature,
             )
     else:
         # Shared reflections: judge_reflections[scenario][eval_nick]
@@ -746,6 +755,7 @@ def collect_mixed_evaluations(
             _phase2_vllm_default(
                 eval_assignments, local_base_models, local_tokenizers,
                 eval_responses, judge_reflections, criteria_text, max_tokens, verbose,
+                vllm_temperature,
             )
 
     # Phase 3: Pairwise Comparisons
@@ -773,7 +783,7 @@ def collect_mixed_evaluations(
             eval_assignments, comparison_tasks, local_base_models,
             local_tokenizers, model_nicks, eval_responses,
             judge_reflections, criteria_text, allow_ties, max_tokens,
-            all_to_all, verbose,
+            all_to_all, verbose, vllm_temperature,
         )
         all_evaluations.extend(vllm_evals)
         if vllm_evals:
