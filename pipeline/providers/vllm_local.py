@@ -35,6 +35,27 @@ def group_models_for_vllm(
         hf_path = model_path.split("hf_local:")[1]
         print(f"Inspecting local HF model: {hf_path}")
 
+        # Support local filesystem paths: "hf_local:/abs/path/to/adapter_or_model"
+        if os.path.isdir(hf_path):
+            local_acp = os.path.join(hf_path, "adapter_config.json")
+            if os.path.exists(local_acp):
+                with open(local_acp, "r") as f:
+                    adapter_cfg = json.load(f)
+                base_model_id = adapter_cfg["base_model_name_or_path"]
+                print(f"Detected local LoRA adapter dir. Base model: {base_model_id}")
+                if base_model_id not in local_base_models:
+                    local_base_models[base_model_id] = {"loras": {}, "base_only": False}
+                    local_tokenizers[base_model_id] = AutoTokenizer.from_pretrained(base_model_id)
+                local_base_models[base_model_id]["loras"][nick] = hf_path
+            else:
+                base_model_id = hf_path
+                print("Detected local full model dir.")
+                if base_model_id not in local_base_models:
+                    local_base_models[base_model_id] = {"loras": {}, "base_only": False}
+                    local_tokenizers[base_model_id] = AutoTokenizer.from_pretrained(base_model_id)
+                local_base_models[base_model_id]["base_only"] = nick
+            continue
+
         # Support subfolder syntax: "hf_local:org/repo/subfolder"
         # e.g., "hf_local:maius/qwen-2.5-7b-it-personas/sarcasm"
         subfolder = None
