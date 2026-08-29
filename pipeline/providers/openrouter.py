@@ -34,7 +34,8 @@ def _direct_anthropic(model_id, messages, temperature, max_tokens):
         kwargs["system"] = system
     try:
         r = client.messages.create(**kwargs)
-    except anthropic.BadRequestError as e:
+    except (anthropic.BadRequestError, TypeError) as e:
+        # SDK 1.x removed the temperature kwarg (TypeError); some models 400 on it
         if "temperature" in str(e):
             kwargs.pop("temperature", None)
             r = client.messages.create(**kwargs)
