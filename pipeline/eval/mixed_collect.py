@@ -20,7 +20,7 @@ from pipeline.providers.vllm_local import (
 from .criteria_collectors import build_reflection_prompt, build_comparison_prompt
 from .samplers import select_sampler
 
-MAX_PARALLEL_API_CALLS = 10
+MAX_PARALLEL_API_CALLS = 32  # was 10; OR judging is wall-clock bottleneck
 
 
 def _has_local_models(models: dict[str, str]) -> bool:
