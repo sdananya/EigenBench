@@ -31,6 +31,7 @@ RUN_SPEC = {
         "evaluations_path": "evaluations.jsonl",
         "cached_responses_path": None,
         "allow_ties": True,
+        "max_tokens": 8192,
         "group_size": 4,
         "groups": 1,
         "sampler_mode": "random_judge_group",
