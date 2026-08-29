@@ -115,6 +115,19 @@ def _build_eval_assignments_all_to_all(
     return assignments
 
 
+
+
+def _strip_think(text: str) -> str:
+    """Remove Qwen3-style <think> blocks (closed or truncated-open) from vLLM output.
+
+    Upstream evaluee models carried no reasoning tags; judges should never see them.
+    """
+    import re as _re
+    text = _re.sub(r"<think>.*?</think>", "", text, flags=_re.DOTALL)
+    if "<think>" in text:
+        text = text.split("<think>")[0]
+    return text.strip()
+
 # Phase 1: Evaluee Responses
 
 def _phase1_openrouter(
@@ -205,7 +218,7 @@ def _phase1_vllm(
                     adapter_request = lora_requests.get(nick)
                     outputs = llm.generate(prompts, sampling_params, lora_request=adapter_request)
                     for i, output in enumerate(outputs):
-                        eval_responses[scenario_indices[i]][nick] = output.outputs[0].text
+                        eval_responses[scenario_indices[i]][nick] = _strip_think(output.outputs[0].text)
 
 
 # Phase 2: Judge Reflections
@@ -368,7 +381,7 @@ def _phase2_vllm_default(
                     adapter_request = lora_requests.get(nick)
                     outputs = llm.generate(prompts, sampling_params, lora_request=adapter_request)
                     for i, output in enumerate(outputs):
-                        judge_reflections[scenario_indices_run[i]][eval_nicks_run[i]] = output.outputs[0].text
+                        judge_reflections[scenario_indices_run[i]][eval_nicks_run[i]] = _strip_think(output.outputs[0].text)
 
 
 def _phase2_vllm_all_to_all(
@@ -433,7 +446,7 @@ def _phase2_vllm_all_to_all(
                     adapter_request = lora_requests.get(nick)
                     outputs = llm.generate(prompts, sampling_params, lora_request=adapter_request)
                     for i, output in enumerate(outputs):
-                        judge_reflections[scenario_indices_run[i]][nick][eval_nicks_run[i]] = output.outputs[0].text
+                        judge_reflections[scenario_indices_run[i]][nick][eval_nicks_run[i]] = _strip_think(output.outputs[0].text)
 
 
 # Phase 3: Pairwise Comparisons
@@ -656,7 +669,7 @@ def _phase3_vllm(
                     for i, output in enumerate(outputs):
                         assignment_idx, eval1_nick, eval2_nick = tasks_run[i]
                         assignment = eval_assignments[assignment_idx]
-                        judge_response = output.outputs[0].text
+                        judge_response = _strip_think(output.outputs[0].text)
 
                         evaluation = _build_evaluation_record(
                             assignment, eval1_nick, eval2_nick, model_nicks,
