@@ -19,8 +19,11 @@ from dotenv import load_dotenv
 _RETRIES = 4
 _BACKOFF = 4  # seconds, doubled per attempt
 
-_ANTHROPIC_IDS = {"anthropic/claude-sonnet-4.5": "claude-sonnet-4-5-20250929"}
-_OPENAI_IDS = {"openai/gpt-5": "gpt-5", "openai/gpt-4.1": "gpt-4.1"}
+_ANTHROPIC_IDS = {"anthropic/claude-sonnet-4.5": "claude-sonnet-4-5-20250929",
+                  "anthropic/claude-3-haiku": "claude-3-haiku-20240307"}
+_OPENAI_IDS = {"openai/gpt-5": "gpt-5", "openai/gpt-4.1": "gpt-4.1",
+               "openai/gpt-4o": "gpt-4o", "openai/gpt-4o-mini": "gpt-4o-mini",
+               "openai/gpt-3.5-turbo": "gpt-3.5-turbo"}
 
 
 def _direct_anthropic(model_id, messages, temperature, max_tokens):
