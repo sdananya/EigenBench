@@ -22,6 +22,26 @@ from .samplers import select_sampler
 
 MAX_PARALLEL_API_CALLS = 32  # was 10; OR judging is wall-clock bottleneck
 
+# Optional per-nick system-prompt additions for RESPONSE generation only (judging
+# and reflections untouched). Set EIGEN_SYSPROMPT_OVERRIDES to a JSON file of
+# {nick: text}; text is appended to the default system message for that nick.
+# Used for prompted-but-untrained control arms (e.g. base + constitution).
+import json as _json
+import os as _os
+
+_SYSPROMPT_OVERRIDES: dict[str, str] = {}
+if _os.environ.get("EIGEN_SYSPROMPT_OVERRIDES"):
+    with open(_os.environ["EIGEN_SYSPROMPT_OVERRIDES"]) as _f:
+        _SYSPROMPT_OVERRIDES = _json.load(_f)
+    print(f"[mixed_collect] system-prompt overrides for: {sorted(_SYSPROMPT_OVERRIDES)}")
+
+_DEFAULT_RESPONSE_SYSTEM = "Without making any mention of being an AI, respond in character to the following scenario."
+
+
+def _response_system(nick: str) -> str:
+    extra = _SYSPROMPT_OVERRIDES.get(nick)
+    return _DEFAULT_RESPONSE_SYSTEM + ("\n\n" + extra if extra else "")
+
 
 def _has_local_models(models: dict[str, str]) -> bool:
     return any(v.startswith("hf_local:") for v in models.values())
@@ -148,7 +168,7 @@ def _phase1_openrouter(
             if eval_nick in openrouter_models and key not in seen and eval_nick not in eval_responses[s_idx]:
                 seen.add(key)
                 messages = [
-                    {"role": "system", "content": "Without making any mention of being an AI, respond in character to the following scenario."},
+                    {"role": "system", "content": _response_system(eval_nick)},
                     {"role": "user", "content": assignment["scenario"]},
                 ]
                 tasks.append((s_idx, eval_nick, openrouter_models[eval_nick], messages))
@@ -205,7 +225,7 @@ def _phase1_vllm(
                     s_idx = assignment["scenario_index"]
                     if nick in assignment["eval_nicks"] and nick not in eval_responses[s_idx]:
                         messages = [
-                            {"role": "system", "content": "Without making any mention of being an AI, respond in character to the following scenario."},
+                            {"role": "system", "content": _response_system(nick)},
                             {"role": "user", "content": assignment["scenario"]},
                         ]
                         prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
