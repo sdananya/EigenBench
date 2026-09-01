@@ -1,0 +1,74 @@
+[
+  {
+    "model_index": 0,
+    "model_name": "qwen3-base",
+    "elo_mean": 1591.418928115323,
+    "elo_std": 7.4679799292294415,
+    "elo_ci_lower": 1577.5684710197158,
+    "elo_ci_upper": 1602.9672898188655
+  },
+  {
+    "model_index": 8,
+    "model_name": "gemini-2.5-pro",
+    "elo_mean": 1590.6038433868528,
+    "elo_std": 4.7556901663332845,
+    "elo_ci_lower": 1580.7242490127644,
+    "elo_ci_upper": 1598.403488958963
+  },
+  {
+    "model_index": 3,
+    "model_name": "stoic_noD7",
+    "elo_mean": 1499.5117826778494,
+    "elo_std": 5.047746504260364,
+    "elo_ci_lower": 1489.0133890425896,
+    "elo_ci_upper": 1507.6528073788593
+  },
+  {
+    "model_index": 4,
+    "model_name": "stoic4",
+    "elo_mean": 1479.5447240987864,
+    "elo_std": 6.971393863239114,
+    "elo_ci_lower": 1466.46737685688,
+    "elo_ci_upper": 1494.300651186894
+  },
+  {
+    "model_index": 7,
+    "model_name": "gpt-5",
+    "elo_mean": 1474.7572077431146,
+    "elo_std": 4.625251984582982,
+    "elo_ci_lower": 1466.7499900174528,
+    "elo_ci_upper": 1484.6011530624403
+  },
+  {
+    "model_index": 1,
+    "model_name": "stoic",
+    "elo_mean": 1457.5569311633828,
+    "elo_std": 4.373587099474003,
+    "elo_ci_lower": 1447.9958848805022,
+    "elo_ci_upper": 1465.5174692967908
+  },
+  {
+    "model_index": 5,
+    "model_name": "parrhesia",
+    "elo_mean": 1450.1372114958272,
+    "elo_std": 5.879991114234307,
+    "elo_ci_lower": 1440.1759151914857,
+    "elo_ci_upper": 1464.978501541329
+  },
+  {
+    "model_index": 2,
+    "model_name": "mixed",
+    "elo_mean": 1431.9809138820035,
+    "elo_std": 5.920788832376793,
+    "elo_ci_lower": 1420.3905986189002,
+    "elo_ci_upper": 1443.5017640677995
+  },
+  {
+    "model_index": 6,
+    "model_name": "claude-sonnet-4.5",
+    "elo_mean": 1427.0796464337816,
+    "elo_std": 5.450452246992829,
+    "elo_ci_lower": 1417.1062894226,
+    "elo_ci_upper": 1438.816861567043
+  }
+]

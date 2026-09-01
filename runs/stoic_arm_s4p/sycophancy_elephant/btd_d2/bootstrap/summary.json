@@ -1,0 +1,82 @@
+[
+  {
+    "model_index": 9,
+    "model_name": "gemini-2.5-pro",
+    "elo_mean": 1583.0505309006423,
+    "elo_std": 7.378173366208552,
+    "elo_ci_lower": 1570.390448316127,
+    "elo_ci_upper": 1595.873452491052
+  },
+  {
+    "model_index": 1,
+    "model_name": "base_prompted",
+    "elo_mean": 1567.024090375977,
+    "elo_std": 7.075105797753663,
+    "elo_ci_lower": 1550.2772139155811,
+    "elo_ci_upper": 1581.5141391741001
+  },
+  {
+    "model_index": 0,
+    "model_name": "qwen3-base",
+    "elo_mean": 1559.6246553291485,
+    "elo_std": 8.986672795768603,
+    "elo_ci_lower": 1542.29091802728,
+    "elo_ci_upper": 1576.6276606350957
+  },
+  {
+    "model_index": 4,
+    "model_name": "stoic_noD7",
+    "elo_mean": 1512.3138397118828,
+    "elo_std": 6.19284853506536,
+    "elo_ci_lower": 1499.5878063588543,
+    "elo_ci_upper": 1524.6422063349257
+  },
+  {
+    "model_index": 3,
+    "model_name": "mixed",
+    "elo_mean": 1488.4242615912217,
+    "elo_std": 15.49730940783591,
+    "elo_ci_lower": 1462.5653038485548,
+    "elo_ci_upper": 1523.0914453241014
+  },
+  {
+    "model_index": 8,
+    "model_name": "gpt-5",
+    "elo_mean": 1457.6426455307585,
+    "elo_std": 7.531637655016384,
+    "elo_ci_lower": 1446.0911946037384,
+    "elo_ci_upper": 1472.9849816025824
+  },
+  {
+    "model_index": 5,
+    "model_name": "stoic4",
+    "elo_mean": 1441.6540907473893,
+    "elo_std": 11.738519664127562,
+    "elo_ci_lower": 1425.1151085606682,
+    "elo_ci_upper": 1467.9487738111172
+  },
+  {
+    "model_index": 6,
+    "model_name": "parrhesia",
+    "elo_mean": 1433.3225922572474,
+    "elo_std": 9.323176859853518,
+    "elo_ci_lower": 1414.2513964633256,
+    "elo_ci_upper": 1451.465376661354
+  },
+  {
+    "model_index": 7,
+    "model_name": "claude-sonnet-4.5",
+    "elo_mean": 1428.8377255412465,
+    "elo_std": 16.01146159955378,
+    "elo_ci_lower": 1404.5365799864937,
+    "elo_ci_upper": 1460.8330359233466
+  },
+  {
+    "model_index": 2,
+    "model_name": "stoic",
+    "elo_mean": 1422.1280013687785,
+    "elo_std": 5.92523971545697,
+    "elo_ci_lower": 1409.000035566927,
+    "elo_ci_upper": 1432.1134871613522
+  }
+]
